@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painkiller Log</title>
+<meta name="description" content="Log painkiller doses and see rolling 24 hour totals. Your data stays on your device.">
+<meta name="theme-color" content="#1c5d8c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Painkiller Log</h1>
+    <p class="sub">Log each dose. The page counts every rolling 24 hours, shows what you can take now and when the next dose is allowed. For adults, 18 and over.</p>
+    <p class="sync">Saved on this device only. Nothing is sent anywhere.</p>
+  </header>
+
+  <p class="alert"><strong>Taken too much, even if you feel fine? Call 111 now.</strong> Feel unwell, or it is a large amount? Call 999.</p>
+
+  <section aria-labelledby="h-meters">
+    <h2 id="h-meters">Last 24 hours</h2>
+    <div class="stack" id="meters"></div>
+  </section>
+
+  <section aria-labelledby="h-log-dose">
+    <h2 id="h-log-dose">Log a dose</h2>
+    <div class="when" id="when">
+      <span class="when-label">When did you take it?</span>
+      <button class="chip" data-act="when" data-v="0" aria-pressed="true">Just now</button>
+      <button class="chip" data-act="when" data-v="15" aria-pressed="false">15 min ago</button>
+      <button class="chip" data-act="when" data-v="30" aria-pressed="false">30 min ago</button>
+      <button class="chip" data-act="when" data-v="60" aria-pressed="false">1 hour ago</button>
+      <button class="chip" data-act="when" data-v="pick" aria-pressed="false">Pick a time</button>
+      <input type="time" id="pick-time" aria-label="Time taken" hidden>
+    </div>
+    <div class="stack" id="cards"></div>
+  </section>
+
+  <section aria-labelledby="h-history">
+    <h2 id="h-history">Dose log</h2>
+    <div class="log" id="history"></div>
+    <div class="tools">
+      <button class="btn outline small" data-act="copy">Copy log as text</button>
+    </div>
+  </section>
+
+  <details>
+    <summary>Medicines I use</summary>
+    <div class="fold">
+      <p class="note">Tick the ones you want on the page. Limits for each come from the sources at the bottom.</p>
+      <div class="list" id="med-toggles"></div>
+      <div class="list" id="custom-list"></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Add my own medicine</summary>
+    <form class="fold" id="custom-form" autocomplete="off">
+      <p class="note">Copy the limits from the box, the leaflet or what your prescriber told you. The page cannot check them for you.</p>
+      <div class="field"><label for="c-name">Name and strength</label><input id="c-name" type="text" maxlength="60" placeholder="e.g. Naproxen 250 mg tablets" required></div>
+      <div class="grid2">
+        <div class="field"><label for="c-unit">What you count</label><input id="c-unit" type="text" maxlength="16" value="tablet"></div>
+        <div class="field"><label for="c-para">Paracetamol per unit (mg, 0 if none)</label><input id="c-para" type="number" inputmode="numeric" min="0" max="2000" value="0"></div>
+        <div class="field"><label for="c-ibu">Ibuprofen per unit (mg, 0 if none)</label><input id="c-ibu" type="number" inputmode="numeric" min="0" max="1000" value="0"></div>
+        <div class="field"><label for="c-perdose">Most units in one dose</label><input id="c-perdose" type="number" inputmode="numeric" min="1" max="20" value="1" required></div>
+        <div class="field"><label for="c-gap">Hours between doses (at least)</label><input id="c-gap" type="number" inputmode="decimal" min="0.5" max="24" step="0.5" value="6" required></div>
+        <div class="field"><label for="c-max24">Most units in 24 hours</label><input id="c-max24" type="number" inputmode="numeric" min="1" max="100" value="4" required></div>
+        <div class="field"><label for="c-doses24">Most doses in 24 hours</label><input id="c-doses24" type="number" inputmode="numeric" min="1" max="24" value="4" required></div>
+      </div>
+      <label class="check"><input id="c-nsaid" type="checkbox"> <span>It is an anti-inflammatory painkiller such as aspirin, naproxen or diclofenac</span></label>
+      <button class="btn" type="submit">Add medicine</button>
+      <p class="note" id="c-msg" role="status"></p>
+    </form>
+  </details>
+
+  <details>
+    <summary>Lower my limits</summary>
+    <div class="fold">
+      <p class="note">Only lower these if a pharmacist or doctor told you to, for example because you weigh under 50 kg or have a liver or kidney condition. You cannot raise them above the standard adult limit.</p>
+      <div class="grid2">
+        <div class="field"><label for="cap-para">Paracetamol, mg in 24 hours (standard 4,000)</label><input id="cap-para" type="number" inputmode="numeric" min="100" max="4000" step="100"></div>
+        <div class="field"><label for="cap-ibu">Ibuprofen, mg in 24 hours (standard 1,200)</label><input id="cap-ibu" type="number" inputmode="numeric" min="100" max="1200" step="100"></div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Check before you take</summary>
+    <div class="fold">
+      <div><strong>Paracetamol</strong>
+        <ul>
+          <li>Ask a pharmacist first if you weigh under 50 kg, have liver or kidney problems, or drink heavily or binge drink. Your limit may be lower.</li>
+          <li>Do not take it with other medicines that contain paracetamol, such as cold and flu remedies and co-codamol.</li>
+          <li>Check first if you take metoclopramide, domperidone, warfarin or flucloxacillin.</li>
+        </ul>
+      </div>
+      <div><strong>Ibuprofen</strong>
+        <ul>
+          <li>Not for you, or ask first, if you have had an allergic reaction to ibuprofen, aspirin or another anti-inflammatory, a stomach ulcer, asthma, a heart, liver or kidney condition, blood clotting problems or a stroke.</li>
+          <li>Avoid it if you are pregnant or trying to get pregnant unless a doctor or pharmacist says it is fine.</li>
+          <li>Ask first if you take blood thinners such as warfarin, steroids, antidepressants or blood pressure tablets.</li>
+          <li>Do not take it with another anti-inflammatory such as aspirin or naproxen.</li>
+          <li>Take it with or after food. Large amounts of alcohol make side effects more likely.</li>
+        </ul>
+      </div>
+      <div><strong>Co-codamol</strong>
+        <ul>
+          <li>It contains paracetamol, so it counts towards your paracetamol total.</li>
+          <li>It contains codeine, which can cause drowsiness and addiction. Over the counter it is for short-term use only.</li>
+        </ul>
+      </div>
+      <p class="note">Ibuprofen and paracetamol can be taken together if needed. The NHS suggests trying each on its own first, using the lowest dose that works, and stopping when the pain has gone.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>About this page and sources</summary>
+    <div class="fold">
+      <p><strong>What it does.</strong> It adds up what you log over any rolling 24 hours and compares it with adult limits for each medicine and each active ingredient. A medicine with the same ingredient as another, such as co-codamol and paracetamol, shares one total.</p>
+      <p><strong>What it does not do.</strong> The interaction checks are a short built-in list, not a full drug database. It does not know your weight, health or other medicines. The leaflet in your box, a pharmacist or a doctor always comes first. Limits were checked against the sources below on 13 November 2026.</p>
+      <p><strong>Where your log is kept.</strong> On this device, and in your account when you are signed in. Doses older than 7 days are removed.</p>
+      <ul>
+        <li><a href="https://www.nhs.uk/medicines/paracetamol-for-adults/" target="_blank" rel="noopener">NHS: Paracetamol for adults</a></li>
+        <li><a href="https://www.nhs.uk/medicines/ibuprofen-for-adults/how-and-when-to-take-ibuprofen" target="_blank" rel="noopener">NHS: How and when to take ibuprofen</a></li>
+        <li><a href="https://www.nhs.uk/medicines/ibuprofen-for-adults/who-can-and-cannot-take-ibuprofen" target="_blank" rel="noopener">NHS: Who can and cannot take ibuprofen</a></li>
+        <li><a href="https://www.nhs.uk/medicines/co-codamol-for-adults/how-and-when-to-take-co-codamol-for-adults" target="_blank" rel="noopener">NHS: How and when to take co-codamol</a></li>
+        <li><a href="https://www.medicines.org.uk/emc/product/9542/pil" target="_blank" rel="noopener">Ibuprofen 200 mg tablets leaflet (emc)</a></li>
+        <li><a href="https://www.medicines.org.uk/emc/product/4459/smpc/print" target="_blank" rel="noopener">Co-codamol 8/500 tablets (emc)</a></li>
+      </ul>
+    </div>
+  </details>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="version.js"></script>
+<script src="logic.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+</script>
+</body>
+</html>
